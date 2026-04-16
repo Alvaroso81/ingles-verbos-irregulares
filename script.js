@@ -111,18 +111,42 @@ const IRREGULAR_VERBS = [
 const GAME_MODES = {
   "past-participle": {
     label: "Pasado y participio",
-    patterns: ["base-to-two", "spanish-to-two"]
+    patterns: [
+      "base-to-past",
+      "base-to-participle",
+      "base-to-two",
+      "spanish-to-past",
+      "spanish-to-participle",
+      "spanish-to-two",
+      "spanish-to-three"
+    ]
   },
   "guess-infinitive": {
     label: "Adivinar infinitivo",
-    patterns: ["past-to-base", "participle-to-base", "past-to-two", "participle-to-two", "spanish-to-base"]
+    patterns: [
+      "past-to-base",
+      "participle-to-base",
+      "past-to-participle",
+      "participle-to-past",
+      "past-to-two",
+      "participle-to-two",
+      "spanish-to-base",
+      "spanish-to-three"
+    ]
   },
   mixed: {
     label: "Mezclado",
     patterns: [
+      "base-to-past",
+      "base-to-participle",
       "base-to-two",
+      "spanish-to-past",
+      "spanish-to-participle",
       "spanish-to-two",
+      "spanish-to-three",
+      "past-to-participle",
       "past-to-two",
+      "participle-to-past",
       "participle-to-two",
       "spanish-to-base",
       "past-to-base",
@@ -138,6 +162,22 @@ const STORAGE_KEYS = {
 };
 
 const QUESTION_TEMPLATES = {
+  "base-to-past": {
+    prompt: "Escribe solo el pasado del verbo.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Traducción: ${verb.spanish.join(" / ")} | Infinitivo: ${verb.base}`
+        : `Infinitivo: ${verb.base}`,
+    answers: [{ key: "past", label: "Pasado" }]
+  },
+  "base-to-participle": {
+    prompt: "Escribe solo el participio del verbo.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Traducción: ${verb.spanish.join(" / ")} | Infinitivo: ${verb.base}`
+        : `Infinitivo: ${verb.base}`,
+    answers: [{ key: "participle", label: "Participio" }]
+  },
   "base-to-two": {
     prompt: "Completa el pasado y el participio.",
     buildClue: (verb, clueMode) =>
@@ -156,6 +196,33 @@ const QUESTION_TEMPLATES = {
       { key: "past", label: "Pasado" },
       { key: "participle", label: "Participio" }
     ]
+  },
+  "spanish-to-three": {
+    prompt: "Escribe el infinitivo, el pasado y el participio en inglés.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [
+      { key: "base", label: "Infinitivo" },
+      { key: "past", label: "Pasado" },
+      { key: "participle", label: "Participio" }
+    ]
+  },
+  "spanish-to-past": {
+    prompt: "Escribe en inglés solo el pasado.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [{ key: "past", label: "Pasado" }]
+  },
+  "spanish-to-participle": {
+    prompt: "Escribe en inglés solo el participio.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [{ key: "participle", label: "Participio" }]
+  },
+  "past-to-participle": {
+    prompt: "A partir del pasado, escribe solo el participio.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Pista en español: ${verb.spanish.join(" / ")} | Pasado: ${verb.past[0]}`
+        : `Pasado: ${verb.past[0]}`,
+    answers: [{ key: "participle", label: "Participio" }]
   },
   "past-to-two": {
     prompt: "A partir del pasado, completa infinitivo y participio.",
@@ -178,6 +245,14 @@ const QUESTION_TEMPLATES = {
       { key: "base", label: "Infinitivo" },
       { key: "past", label: "Pasado" }
     ]
+  },
+  "participle-to-past": {
+    prompt: "A partir del participio, escribe solo el pasado.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Pista en español: ${verb.spanish.join(" / ")} | Participio: ${verb.participle[0]}`
+        : `Participio: ${verb.participle[0]}`,
+    answers: [{ key: "past", label: "Pasado" }]
   },
   "spanish-to-base": {
     prompt: "Adivina el infinitivo en inglés.",
