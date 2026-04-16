@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Superconversiones</title>
+    <title>Superverbos Irregulares</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,10 +22,10 @@
       <main class="screen-stack">
         <section class="screen active" id="startScreen" aria-labelledby="gameTitle">
           <div class="hero-card">
-            <p class="eyebrow">Juego de matemáticas para móvil</p>
-            <h1 id="gameTitle">Superconversiones</h1>
+            <p class="eyebrow">Juego de inglés para móvil</p>
+            <h1 id="gameTitle">Superverbos Irregulares</h1>
             <p class="subtitle">
-              Practica cambios de unidades, consigue rachas y gana puntos antes de quedarte sin vidas.
+              Escribe en inglés, encadena rachas y gana puntos antes de quedarte sin vidas.
             </p>
 
             <form id="startForm" class="start-form">
@@ -42,9 +42,8 @@
 
               <label class="field-label" for="gameMode">Modo de juego</label>
               <select id="gameMode" name="gameMode">
-                <option value="length">Longitud</option>
-                <option value="mass">Masa</option>
-                <option value="capacity">Capacidad</option>
+                <option value="past-participle">Pasado y participio</option>
+                <option value="guess-infinitive">Adivinar infinitivo</option>
                 <option value="mixed">Mezclado</option>
               </select>
 
@@ -111,7 +110,7 @@
               <span class="question-badge" id="questionModeBadge">Modo mezclado</span>
               <h3 id="questionPrompt">Cargando pregunta...</h3>
               <p class="question-helper" id="questionHelper">
-                Escribe solo el número. Puedes usar coma o punto decimal.
+                Responde siempre en inglés y usa una respuesta por casilla.
               </p>
               <div class="clue-card" id="questionClue"></div>
 
@@ -196,8 +195,8 @@
               <input
                 id="verbSearchInput"
                 type="search"
-                placeholder="Buscar unidad o magnitud"
-                aria-label="Buscar unidad o magnitud"
+                placeholder="Buscar verbo o traducción"
+                aria-label="Buscar verbo o traducción"
               />
               <button class="secondary-button" id="sortTableBtn" type="button">
                 Ordenar A-Z
@@ -208,10 +207,10 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Unidad</th>
-                    <th>Nombre</th>
-                    <th>Equivale a</th>
-                    <th>Magnitud</th>
+                    <th>Infinitivo</th>
+                    <th>Pasado</th>
+                    <th>Participio</th>
+                    <th>Español</th>
                   </tr>
                 </thead>
                 <tbody id="verbTableBody"></tbody>

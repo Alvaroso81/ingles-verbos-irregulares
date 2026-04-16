@@ -1,69 +1,281 @@
-const UNIT_GROUPS = {
-  length: {
-    id: "length",
-    label: "Longitud",
-    ladder: "km - hm - dam - m - dm - cm - mm",
-    units: [
-      { symbol: "mm", name: "milímetro", toBase: 0.001, equivalent: "1 mm = 0,001 m" },
-      { symbol: "cm", name: "centímetro", toBase: 0.01, equivalent: "1 cm = 0,01 m" },
-      { symbol: "dm", name: "decímetro", toBase: 0.1, equivalent: "1 dm = 0,1 m" },
-      { symbol: "m", name: "metro", toBase: 1, equivalent: "1 m = 100 cm" },
-      { symbol: "dam", name: "decámetro", toBase: 10, equivalent: "1 dam = 10 m" },
-      { symbol: "hm", name: "hectómetro", toBase: 100, equivalent: "1 hm = 100 m" },
-      { symbol: "km", name: "kilómetro", toBase: 1000, equivalent: "1 km = 1000 m" }
+// Dataset principal del libro. Si quieres retocar alguna traduccion u opcion,
+// solo hace falta editar este array.
+const IRREGULAR_VERBS = [
+  { base: "be", past: ["was", "were"], participle: ["been"], spanish: ["ser", "estar"] },
+  { base: "beat", past: ["beat"], participle: ["beaten"], spanish: ["golpear", "vencer"] },
+  { base: "become", past: ["became"], participle: ["become"], spanish: ["llegar a ser", "convertirse en"] },
+  { base: "begin", past: ["began"], participle: ["begun"], spanish: ["empezar", "comenzar"] },
+  { base: "bend", past: ["bent"], participle: ["bent"], spanish: ["doblar"] },
+  { base: "bet", past: ["bet"], participle: ["bet"], spanish: ["apostar"] },
+  { base: "bite", past: ["bit"], participle: ["bitten"], spanish: ["morder"] },
+  { base: "bleed", past: ["bled"], participle: ["bled"], spanish: ["sangrar"] },
+  { base: "blow", past: ["blew"], participle: ["blown"], spanish: ["soplar"] },
+  { base: "break", past: ["broke"], participle: ["broken"], spanish: ["romper"] },
+  { base: "bring", past: ["brought"], participle: ["brought"], spanish: ["traer"] },
+  { base: "build", past: ["built"], participle: ["built"], spanish: ["construir"] },
+  { base: "burn", past: ["burnt", "burned"], participle: ["burnt", "burned"], spanish: ["quemar"] },
+  { base: "buy", past: ["bought"], participle: ["bought"], spanish: ["comprar"] },
+  { base: "catch", past: ["caught"], participle: ["caught"], spanish: ["atrapar", "coger"] },
+  { base: "choose", past: ["chose"], participle: ["chosen"], spanish: ["elegir", "escoger"] },
+  { base: "come", past: ["came"], participle: ["come"], spanish: ["venir"] },
+  { base: "cost", past: ["cost"], participle: ["cost"], spanish: ["costar"] },
+  { base: "cut", past: ["cut"], participle: ["cut"], spanish: ["cortar"] },
+  { base: "dig", past: ["dug"], participle: ["dug"], spanish: ["cavar"] },
+  { base: "do", past: ["did"], participle: ["done"], spanish: ["hacer"] },
+  { base: "draw", past: ["drew"], participle: ["drawn"], spanish: ["dibujar"] },
+  { base: "dream", past: ["dreamt", "dreamed"], participle: ["dreamt", "dreamed"], spanish: ["soñar"] },
+  { base: "drink", past: ["drank"], participle: ["drunk"], spanish: ["beber"] },
+  { base: "drive", past: ["drove"], participle: ["driven"], spanish: ["conducir"] },
+  { base: "eat", past: ["ate"], participle: ["eaten"], spanish: ["comer"] },
+  { base: "fall", past: ["fell"], participle: ["fallen"], spanish: ["caer"] },
+  { base: "feed", past: ["fed"], participle: ["fed"], spanish: ["dar de comer", "alimentar"] },
+  { base: "feel", past: ["felt"], participle: ["felt"], spanish: ["sentir"] },
+  { base: "fight", past: ["fought"], participle: ["fought"], spanish: ["luchar", "pelear"] },
+  { base: "find", past: ["found"], participle: ["found"], spanish: ["encontrar"] },
+  { base: "fly", past: ["flew"], participle: ["flown"], spanish: ["volar"] },
+  { base: "forget", past: ["forgot"], participle: ["forgotten"], spanish: ["olvidar"] },
+  { base: "forgive", past: ["forgave"], participle: ["forgiven"], spanish: ["perdonar"] },
+  { base: "freeze", past: ["froze"], participle: ["frozen"], spanish: ["congelar"] },
+  { base: "get", past: ["got"], participle: ["got", "gotten"], spanish: ["conseguir", "obtener"] },
+  { base: "give", past: ["gave"], participle: ["given"], spanish: ["dar"] },
+  { base: "go", past: ["went"], participle: ["gone"], spanish: ["ir"] },
+  { base: "grow", past: ["grew"], participle: ["grown"], spanish: ["crecer"] },
+  { base: "hang", past: ["hung", "hanged"], participle: ["hung", "hanged"], spanish: ["colgar"] },
+  { base: "have", past: ["had"], participle: ["had"], spanish: ["tener", "haber"] },
+  { base: "hear", past: ["heard"], participle: ["heard"], spanish: ["oír", "escuchar"] },
+  { base: "hide", past: ["hid"], participle: ["hidden"], spanish: ["esconder"] },
+  { base: "hit", past: ["hit"], participle: ["hit"], spanish: ["golpear"] },
+  { base: "hold", past: ["held"], participle: ["held"], spanish: ["sujetar", "sostener"] },
+  { base: "hurt", past: ["hurt"], participle: ["hurt"], spanish: ["hacer daño", "doler"] },
+  { base: "keep", past: ["kept"], participle: ["kept"], spanish: ["guardar", "mantener"] },
+  { base: "know", past: ["knew"], participle: ["known"], spanish: ["saber", "conocer"] },
+  { base: "lay", past: ["laid"], participle: ["laid"], spanish: ["poner", "colocar"] },
+  { base: "lead", past: ["led"], participle: ["led"], spanish: ["guiar", "dirigir"] },
+  { base: "learn", past: ["learnt", "learned"], participle: ["learnt", "learned"], spanish: ["aprender"] },
+  { base: "leave", past: ["left"], participle: ["left"], spanish: ["dejar", "marcharse"] },
+  { base: "lend", past: ["lent"], participle: ["lent"], spanish: ["prestar"] },
+  { base: "let", past: ["let"], participle: ["let"], spanish: ["permitir", "dejar"] },
+  { base: "lie", past: ["lay"], participle: ["lain"], spanish: ["tumbarse"] },
+  { base: "lie", past: ["lied"], participle: ["lied"], spanish: ["mentir"] },
+  { base: "light", past: ["lit"], participle: ["lit"], spanish: ["encender"] },
+  { base: "lose", past: ["lost"], participle: ["lost"], spanish: ["perder"] },
+  { base: "make", past: ["made"], participle: ["made"], spanish: ["hacer", "fabricar"] },
+  { base: "mean", past: ["meant"], participle: ["meant"], spanish: ["querer decir", "significar"] },
+  { base: "meet", past: ["met"], participle: ["met"], spanish: ["conocer", "encontrarse con"] },
+  { base: "overcome", past: ["overcame"], participle: ["overcome"], spanish: ["superar"] },
+  { base: "pay", past: ["paid"], participle: ["paid"], spanish: ["pagar"] },
+  { base: "put", past: ["put"], participle: ["put"], spanish: ["poner"] },
+  { base: "quit", past: ["quit", "quitted"], participle: ["quit", "quitted"], spanish: ["dejar", "abandonar"] },
+  { base: "read", past: ["read"], participle: ["read"], spanish: ["leer"] },
+  { base: "ride", past: ["rode"], participle: ["ridden"], spanish: ["montar", "ir en"] },
+  { base: "ring", past: ["rang"], participle: ["rung"], spanish: ["sonar", "llamar"] },
+  { base: "rise", past: ["rose"], participle: ["risen"], spanish: ["levantarse", "subir"] },
+  { base: "run", past: ["ran"], participle: ["run"], spanish: ["correr"] },
+  { base: "say", past: ["said"], participle: ["said"], spanish: ["decir"] },
+  { base: "see", past: ["saw"], participle: ["seen"], spanish: ["ver"] },
+  { base: "sell", past: ["sold"], participle: ["sold"], spanish: ["vender"] },
+  { base: "send", past: ["sent"], participle: ["sent"], spanish: ["enviar"] },
+  { base: "set", past: ["set"], participle: ["set"], spanish: ["colocar", "poner"] },
+  { base: "shake", past: ["shook"], participle: ["shaken"], spanish: ["agitar"] },
+  { base: "shine", past: ["shone"], participle: ["shone"], spanish: ["brillar"] },
+  { base: "shoot", past: ["shot"], participle: ["shot"], spanish: ["disparar"] },
+  { base: "show", past: ["showed"], participle: ["shown"], spanish: ["mostrar", "enseñar"] },
+  { base: "shut", past: ["shut"], participle: ["shut"], spanish: ["cerrar"] },
+  { base: "sing", past: ["sang"], participle: ["sung"], spanish: ["cantar"] },
+  { base: "sink", past: ["sank"], participle: ["sunk"], spanish: ["hundir", "hundirse"] },
+  { base: "sit", past: ["sat"], participle: ["sat"], spanish: ["sentarse"] },
+  { base: "sleep", past: ["slept"], participle: ["slept"], spanish: ["dormir"] },
+  { base: "smell", past: ["smelt", "smelled"], participle: ["smelt", "smelled"], spanish: ["oler"] },
+  { base: "speak", past: ["spoke"], participle: ["spoken"], spanish: ["hablar"] },
+  { base: "spell", past: ["spelt", "spelled"], participle: ["spelt", "spelled"], spanish: ["deletrear"] },
+  { base: "spend", past: ["spent"], participle: ["spent"], spanish: ["gastar", "pasar tiempo"] },
+  { base: "stand", past: ["stood"], participle: ["stood"], spanish: ["estar de pie"] },
+  { base: "steal", past: ["stole"], participle: ["stolen"], spanish: ["robar"] },
+  { base: "stick", past: ["stuck"], participle: ["stuck"], spanish: ["pegar", "clavar"] },
+  { base: "sting", past: ["stung"], participle: ["stung"], spanish: ["picar"] },
+  { base: "sweep", past: ["swept"], participle: ["swept"], spanish: ["barrer"] },
+  { base: "swim", past: ["swam"], participle: ["swum"], spanish: ["nadar"] },
+  { base: "take", past: ["took"], participle: ["taken"], spanish: ["coger", "tomar", "llevar"] },
+  { base: "teach", past: ["taught"], participle: ["taught"], spanish: ["enseñar"] },
+  { base: "tear", past: ["tore"], participle: ["torn"], spanish: ["rasgar", "romper"] },
+  { base: "tell", past: ["told"], participle: ["told"], spanish: ["decir", "contar"] },
+  { base: "think", past: ["thought"], participle: ["thought"], spanish: ["pensar"] },
+  { base: "throw", past: ["threw"], participle: ["thrown"], spanish: ["lanzar", "tirar"] },
+  { base: "understand", past: ["understood"], participle: ["understood"], spanish: ["entender"] },
+  { base: "wake up", past: ["woke up"], participle: ["woken up"], spanish: ["despertarse"] },
+  { base: "wear", past: ["wore"], participle: ["worn"], spanish: ["llevar puesto"] },
+  { base: "win", past: ["won"], participle: ["won"], spanish: ["ganar"] },
+  { base: "write", past: ["wrote"], participle: ["written"], spanish: ["escribir"] }
+];
+
+const GAME_MODES = {
+  "past-participle": {
+    label: "Pasado y participio",
+    patterns: [
+      "base-to-past",
+      "base-to-participle",
+      "base-to-two",
+      "spanish-to-past",
+      "spanish-to-participle",
+      "spanish-to-two",
+      "spanish-to-three"
     ]
   },
-  mass: {
-    id: "mass",
-    label: "Masa",
-    ladder: "kg - hg - dag - g - dg - cg - mg",
-    units: [
-      { symbol: "mg", name: "miligramo", toBase: 0.001, equivalent: "1 mg = 0,001 g" },
-      { symbol: "cg", name: "centigramo", toBase: 0.01, equivalent: "1 cg = 0,01 g" },
-      { symbol: "dg", name: "decigramo", toBase: 0.1, equivalent: "1 dg = 0,1 g" },
-      { symbol: "g", name: "gramo", toBase: 1, equivalent: "1 g = 1000 mg" },
-      { symbol: "dag", name: "decagramo", toBase: 10, equivalent: "1 dag = 10 g" },
-      { symbol: "hg", name: "hectogramo", toBase: 100, equivalent: "1 hg = 100 g" },
-      { symbol: "kg", name: "kilogramo", toBase: 1000, equivalent: "1 kg = 1000 g" }
+  "guess-infinitive": {
+    label: "Adivinar infinitivo",
+    patterns: [
+      "past-to-base",
+      "participle-to-base",
+      "past-to-participle",
+      "participle-to-past",
+      "past-to-two",
+      "participle-to-two",
+      "spanish-to-base",
+      "spanish-to-three"
     ]
   },
-  capacity: {
-    id: "capacity",
-    label: "Capacidad",
-    ladder: "kl - hl - dal - l - dl - cl - ml",
-    units: [
-      { symbol: "ml", name: "mililitro", toBase: 0.001, equivalent: "1 ml = 0,001 l" },
-      { symbol: "cl", name: "centilitro", toBase: 0.01, equivalent: "1 cl = 0,01 l" },
-      { symbol: "dl", name: "decilitro", toBase: 0.1, equivalent: "1 dl = 0,1 l" },
-      { symbol: "l", name: "litro", toBase: 1, equivalent: "1 l = 1000 ml" },
-      { symbol: "dal", name: "decalitro", toBase: 10, equivalent: "1 dal = 10 l" },
-      { symbol: "hl", name: "hectolitro", toBase: 100, equivalent: "1 hl = 100 l" },
-      { symbol: "kl", name: "kilolitro", toBase: 1000, equivalent: "1 kl = 1000 l" }
+  mixed: {
+    label: "Mezclado",
+    patterns: [
+      "base-to-past",
+      "base-to-participle",
+      "base-to-two",
+      "spanish-to-past",
+      "spanish-to-participle",
+      "spanish-to-two",
+      "spanish-to-three",
+      "past-to-participle",
+      "past-to-two",
+      "participle-to-past",
+      "participle-to-two",
+      "spanish-to-base",
+      "past-to-base",
+      "participle-to-base"
     ]
   }
 };
 
-const GAME_MODES = {
-  length: { label: "Longitud", groups: ["length"] },
-  mass: { label: "Masa", groups: ["mass"] },
-  capacity: { label: "Capacidad", groups: ["capacity"] },
-  mixed: { label: "Mezclado", groups: ["length", "mass", "capacity"] }
-};
-
-const QUESTION_PATTERNS = [
-  { key: "convert-one", label: "Conversión simple", answerCount: 1 },
-  { key: "convert-two", label: "Conversión doble", answerCount: 2 },
-  { key: "convert-three", label: "Conversión triple", answerCount: 3 },
-  { key: "missing-source", label: "Cantidad que falta", answerCount: 1 }
-];
-
 const STORAGE_KEYS = {
-  bestScore: "units-best-score",
-  bestTime: "units-best-time",
-  lastName: "units-last-name"
+  bestScore: "irregular-best-score",
+  bestTime: "irregular-best-time",
+  lastName: "irregular-last-name"
 };
 
-const FRIENDLY_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30, 40, 50, 60, 75, 80, 90, 100, 120, 150, 200, 250, 500];
+const QUESTION_TEMPLATES = {
+  "base-to-past": {
+    prompt: "Escribe solo el pasado del verbo.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Traducción: ${verb.spanish.join(" / ")} | Infinitivo: ${verb.base}`
+        : `Infinitivo: ${verb.base}`,
+    answers: [{ key: "past", label: "Pasado" }]
+  },
+  "base-to-participle": {
+    prompt: "Escribe solo el participio del verbo.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Traducción: ${verb.spanish.join(" / ")} | Infinitivo: ${verb.base}`
+        : `Infinitivo: ${verb.base}`,
+    answers: [{ key: "participle", label: "Participio" }]
+  },
+  "base-to-two": {
+    prompt: "Completa el pasado y el participio.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Traducción: ${verb.spanish.join(" / ")}`
+        : `Infinitivo: ${verb.base}`,
+    answers: [
+      { key: "past", label: "Pasado" },
+      { key: "participle", label: "Participio" }
+    ]
+  },
+  "spanish-to-two": {
+    prompt: "Escribe el verbo en inglés en pasado y participio.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [
+      { key: "past", label: "Pasado" },
+      { key: "participle", label: "Participio" }
+    ]
+  },
+  "spanish-to-three": {
+    prompt: "Escribe el infinitivo, el pasado y el participio en inglés.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [
+      { key: "base", label: "Infinitivo" },
+      { key: "past", label: "Pasado" },
+      { key: "participle", label: "Participio" }
+    ]
+  },
+  "spanish-to-past": {
+    prompt: "Escribe en inglés solo el pasado.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [{ key: "past", label: "Pasado" }]
+  },
+  "spanish-to-participle": {
+    prompt: "Escribe en inglés solo el participio.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [{ key: "participle", label: "Participio" }]
+  },
+  "past-to-participle": {
+    prompt: "A partir del pasado, escribe solo el participio.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Pista en español: ${verb.spanish.join(" / ")} | Pasado: ${verb.past[0]}`
+        : `Pasado: ${verb.past[0]}`,
+    answers: [{ key: "participle", label: "Participio" }]
+  },
+  "past-to-two": {
+    prompt: "A partir del pasado, completa infinitivo y participio.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Pista en español: ${verb.spanish.join(" / ")} | Pasado: ${verb.past[0]}`
+        : `Pasado: ${verb.past[0]}`,
+    answers: [
+      { key: "base", label: "Infinitivo" },
+      { key: "participle", label: "Participio" }
+    ]
+  },
+  "participle-to-two": {
+    prompt: "A partir del participio, completa infinitivo y pasado.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Pista en español: ${verb.spanish.join(" / ")} | Participio: ${verb.participle[0]}`
+        : `Participio: ${verb.participle[0]}`,
+    answers: [
+      { key: "base", label: "Infinitivo" },
+      { key: "past", label: "Pasado" }
+    ]
+  },
+  "participle-to-past": {
+    prompt: "A partir del participio, escribe solo el pasado.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Pista en español: ${verb.spanish.join(" / ")} | Participio: ${verb.participle[0]}`
+        : `Participio: ${verb.participle[0]}`,
+    answers: [{ key: "past", label: "Pasado" }]
+  },
+  "spanish-to-base": {
+    prompt: "Adivina el infinitivo en inglés.",
+    buildClue: (verb) => `Español: ${verb.spanish.join(" / ")}`,
+    answers: [{ key: "base", label: "Infinitivo" }]
+  },
+  "past-to-base": {
+    prompt: "Escribe el infinitivo que corresponde a este pasado.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Español: ${verb.spanish.join(" / ")} | Pasado: ${verb.past[0]}`
+        : `Pasado: ${verb.past[0]}`,
+    answers: [{ key: "base", label: "Infinitivo" }]
+  },
+  "participle-to-base": {
+    prompt: "Escribe el infinitivo que corresponde a este participio.",
+    buildClue: (verb, clueMode) =>
+      clueMode === "spanish"
+        ? `Español: ${verb.spanish.join(" / ")} | Participio: ${verb.participle[0]}`
+        : `Participio: ${verb.participle[0]}`,
+    answers: [{ key: "base", label: "Infinitivo" }]
+  }
+};
 
 const state = {
   playerName: "",
@@ -82,6 +294,7 @@ const state = {
   timerSeconds: 0,
   timerId: null,
   tableSortAsc: true,
+  reviewSource: "summary",
   previousScreen: "start"
 };
 
@@ -123,34 +336,13 @@ const elements = {
   bestScoreBadge: document.getElementById("bestScoreBadge"),
   bestScoreValue: document.getElementById("bestScoreValue"),
   bestTimeValue: document.getElementById("bestTimeValue"),
-  unitTableBody: document.getElementById("verbTableBody"),
-  unitSearchInput: document.getElementById("verbSearchInput"),
+  verbTableBody: document.getElementById("verbTableBody"),
+  verbSearchInput: document.getElementById("verbSearchInput"),
   sortTableBtn: document.getElementById("sortTableBtn")
 };
 
-function roundValue(value) {
-  return Math.round(value * 1000000) / 1000000;
-}
-
-function formatNumber(value) {
-  const rounded = roundValue(value);
-  if (Number.isInteger(rounded)) {
-    return String(rounded);
-  }
-  return rounded.toFixed(6).replace(/\.?0+$/, "").replace(".", ",");
-}
-
-function parseNumberInput(value) {
-  const cleaned = value.trim().replace(/\s+/g, "").replace(",", ".");
-  if (!cleaned) {
-    return null;
-  }
-  const parsed = Number(cleaned);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function nearlyEqual(a, b) {
-  return Math.abs(a - b) < 0.000001;
+function normalizeText(value) {
+  return value.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
 function formatTime(totalSeconds) {
@@ -161,9 +353,9 @@ function formatTime(totalSeconds) {
 
 function shuffleArray(items) {
   const copy = [...items];
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
   return copy;
 }
@@ -200,15 +392,15 @@ function updateBestStatsUI() {
   elements.bestTimeValue.textContent = bestTime > 0 ? formatTime(bestTime) : "--:--";
 }
 
-function loadLastPlayerName() {
-  const lastName = localStorage.getItem(STORAGE_KEYS.lastName);
-  if (lastName) {
-    elements.playerName.value = lastName;
-  }
-}
-
 function savePlayerName(name) {
   localStorage.setItem(STORAGE_KEYS.lastName, name);
+}
+
+function loadLastPlayerName() {
+  const savedName = localStorage.getItem(STORAGE_KEYS.lastName);
+  if (savedName) {
+    elements.playerName.value = savedName;
+  }
 }
 
 function startTimer() {
@@ -236,121 +428,51 @@ function calculateScore({ correctAnswers, maxStreak, lives, totalTime }) {
 
 function getNeutralFeedbackMessage() {
   if (state.currentQuestionIndex === 0) {
-    return "Empieza con calma y revisa bien las unidades.";
+    return "Empieza fuerte y cuida tus vidas.";
   }
+
   if (state.lives === 1) {
-    return "Te queda una vida. Fíjate en los saltos de la escalera.";
-  }
-  return "Siguiente reto. Sigue sumando puntos.";
-}
-
-function getAvailableGroups() {
-  return GAME_MODES[state.mode].groups.map((groupId) => UNIT_GROUPS[groupId]);
-}
-
-function buildSupportRows() {
-  return Object.values(UNIT_GROUPS).flatMap((group) =>
-    group.units.map((unit) => ({
-      symbol: unit.symbol,
-      name: unit.name,
-      equivalent: unit.equivalent,
-      group: group.label,
-      ladder: group.ladder
-    }))
-  );
-}
-
-function pickDistinctUnits(group, count, excludedUnit = null) {
-  const available = group.units.filter((unit) => unit.symbol !== excludedUnit?.symbol);
-  return shuffleArray(available).slice(0, count);
-}
-
-function buildClueText(group, sourceValue, sourceUnit, style) {
-  const quantityBySymbol = `${formatNumber(sourceValue)} ${sourceUnit.symbol}`;
-  const quantityByName = `${formatNumber(sourceValue)} ${sourceUnit.name}${sourceValue === 1 ? "" : "s"}`;
-
-  if (style === "sentence") {
-    return `Convierte esta cantidad de ${group.label.toLowerCase()}: ${quantityByName}`;
-  }
-  if (style === "ladder") {
-    return `Cantidad inicial: ${quantityBySymbol} | Escalera: ${group.ladder}`;
-  }
-  return `Cantidad inicial: ${quantityBySymbol}`;
-}
-
-function convertValue(value, sourceUnit, targetUnit) {
-  const baseValue = value * sourceUnit.toBase;
-  return roundValue(baseValue / targetUnit.toBase);
-}
-
-function buildAnswerField(unit, expectedValue) {
-  return {
-    key: `${unit.symbol}-${expectedValue}`,
-    label: `${unit.name} (${unit.symbol})`,
-    unit: unit.symbol,
-    expectedValue,
-    expectedDisplay: `${formatNumber(expectedValue)} ${unit.symbol}`
-  };
-}
-
-function buildConversionQuestion(group) {
-  const pattern = getRandomItem(QUESTION_PATTERNS);
-  const sourceUnit = getRandomItem(group.units);
-  const sourceValue = getRandomItem(FRIENDLY_VALUES);
-  const clueStyle = getRandomItem(["simple", "sentence", "ladder"]);
-
-  if (pattern.key === "missing-source") {
-    const targetUnit = getRandomItem(pickDistinctUnits(group, 1, sourceUnit));
-    const convertedValue = convertValue(sourceValue, sourceUnit, targetUnit);
-
-    return {
-      groupId: group.id,
-      groupLabel: group.label,
-      patternLabel: pattern.label,
-      prompt: "Completa la cantidad que falta.",
-      clue: `${formatNumber(sourceValue)} ${sourceUnit.symbol} = ? ${targetUnit.symbol}`,
-      helper: "Escribe solo el número. Puedes usar coma o punto decimal.",
-      answers: [buildAnswerField(targetUnit, convertedValue)],
-      summary: `${formatNumber(sourceValue)} ${sourceUnit.symbol} = ${formatNumber(convertedValue)} ${targetUnit.symbol}`,
-      sourceText: `${formatNumber(sourceValue)} ${sourceUnit.symbol}`
-    };
+    return "Ultima vida. Piensa bien antes de responder.";
   }
 
-  const targetUnits = pickDistinctUnits(group, pattern.answerCount, sourceUnit);
-  const answers = targetUnits.map((unit) => buildAnswerField(unit, convertValue(sourceValue, sourceUnit, unit)));
-  const promptByCount = {
-    1: "Convierte a la unidad indicada.",
-    2: "Completa las dos conversiones.",
-    3: "Completa las tres conversiones."
-  };
-
-  return {
-    groupId: group.id,
-    groupLabel: group.label,
-    patternLabel: pattern.label,
-    prompt: promptByCount[pattern.answerCount],
-    clue: buildClueText(group, sourceValue, sourceUnit, clueStyle),
-    helper: "Escribe solo el número. Cada casilla ya indica su unidad.",
-    answers,
-    summary: answers.map((answer) => answer.expectedDisplay).join(" | "),
-    sourceText: `${formatNumber(sourceValue)} ${sourceUnit.symbol}`
-  };
+  return "Siguiente pregunta. Vamos a por otra.";
 }
 
-function buildQuestionPool(totalQuestions, predefinedQuestions = null) {
-  if (predefinedQuestions) {
-    return shuffleArray(predefinedQuestions).slice(0, totalQuestions);
-  }
+function getPatternsForMode(mode) {
+  return GAME_MODES[mode].patterns;
+}
 
-  const groups = getAvailableGroups();
+function buildQuestionPool(sourceVerbs, totalQuestions) {
+  const verbs = shuffleArray(sourceVerbs);
   const pool = [];
 
-  for (let index = 0; index < totalQuestions; index += 1) {
-    const group = getRandomItem(groups);
-    pool.push(buildConversionQuestion(group));
+  while (pool.length < totalQuestions) {
+    pool.push(...shuffleArray(verbs));
   }
 
-  return pool;
+  return pool.slice(0, totalQuestions);
+}
+
+function pickClueMode(patternKey) {
+  if (patternKey === "spanish-to-two" || patternKey === "spanish-to-base") {
+    return "spanish";
+  }
+  return Math.random() < 0.5 ? "english" : "spanish";
+}
+
+function buildQuestion(verb) {
+  const patternKey = getRandomItem(getPatternsForMode(state.mode));
+  const template = QUESTION_TEMPLATES[patternKey];
+  const clueMode = pickClueMode(patternKey);
+
+  return {
+    verb,
+    patternKey,
+    prompt: template.prompt,
+    clue: template.buildClue(verb, clueMode),
+    clueMode,
+    answers: template.answers
+  };
 }
 
 function updateScoreboard() {
@@ -365,13 +487,17 @@ function updateScoreboard() {
 
 function renderQuestion() {
   updateScoreboard();
-  const question = state.questionPool[state.currentQuestionIndex];
+  const question = buildQuestion(state.questionPool[state.currentQuestionIndex]);
   state.currentQuestion = question;
+  const modeLabel = GAME_MODES[state.mode].label;
 
-  elements.questionModeBadge.textContent = `${GAME_MODES[state.mode].label} · ${question.groupLabel}`;
+  elements.questionModeBadge.textContent = modeLabel;
   elements.questionPrompt.textContent = question.prompt;
   elements.questionClue.textContent = question.clue;
-  elements.questionHelper.textContent = question.helper;
+  elements.questionHelper.textContent =
+    question.answers.length === 1
+      ? "Responde en inglés y revisa bien la ortografía."
+      : "Responde en inglés. Cada casilla se corrige por separado.";
 
   elements.answerFields.innerHTML = question.answers
     .map(
@@ -380,12 +506,12 @@ function renderQuestion() {
           <label for="answer-${index}">${answer.label}</label>
           <input
             id="answer-${index}"
-            name="${index}"
+            name="${answer.key}"
             type="text"
-            inputmode="decimal"
             autocomplete="off"
+            autocapitalize="off"
             spellcheck="false"
-            placeholder="Escribe el número"
+            placeholder="Escribe aquí"
             required
           />
         </div>
@@ -403,27 +529,43 @@ function renderQuestion() {
   }
 }
 
-function showFeedback(type, message) {
-  elements.feedbackBox.className = `feedback-box ${type}`;
-  elements.feedbackBox.textContent = message;
-  pulseElement(elements.feedbackBox);
+function isCorrectAnswer(userValue, validAnswers) {
+  const normalizedUserValue = normalizeText(userValue);
+  return validAnswers.some((answer) => normalizeText(answer) === normalizedUserValue);
+}
+
+function getValidAnswersForKey(verb, key) {
+  return key === "base" ? [verb.base] : verb[key];
+}
+
+function getCorrectAnswerText(key, verb) {
+  if (key === "base") {
+    return verb.base;
+  }
+  return verb[key].join(" / ");
 }
 
 function storeMistake(question, userInputs, results) {
   state.mistakes.push({
-    question,
-    groupLabel: question.groupLabel,
-    type: question.patternLabel,
+    verb: question.verb.base,
+    spanish: question.verb.spanish.join(" / "),
+    type: question.prompt,
     clue: question.clue,
-    correct: question.answers.map((answer) => answer.expectedDisplay).join(" | "),
-    user: question.answers
-      .map((answer, index) => {
-        const value = userInputs[index] || "(vacío)";
-        return `${answer.label}: ${value}`;
-      })
+    correct: question.answers
+      .map((answer) => `${answer.label}: ${getCorrectAnswerText(answer.key, question.verb)}`)
       .join(" | "),
-    failedAnswers: results.filter((result) => !result.isCorrect).length
+    user: question.answers
+      .map((answer, index) => `${answer.label}: ${userInputs[index] || "(vacío)"}`)
+      .join(" | "),
+    baseVerb: question.verb,
+    failedKeys: results.filter((item) => !item.isCorrect).map((item) => item.key)
   });
+}
+
+function showFeedback(type, message) {
+  elements.feedbackBox.className = `feedback-box ${type}`;
+  elements.feedbackBox.textContent = message;
+  pulseElement(elements.feedbackBox);
 }
 
 function advanceGame() {
@@ -441,21 +583,6 @@ function advanceGame() {
   }, 950);
 }
 
-function saveBestStats() {
-  const currentBestScore = readStorageNumber(STORAGE_KEYS.bestScore);
-  const currentBestTime = readStorageNumber(STORAGE_KEYS.bestTime);
-
-  if (state.score > currentBestScore) {
-    localStorage.setItem(STORAGE_KEYS.bestScore, String(state.score));
-  }
-
-  if (state.correctAnswers === state.totalQuestions && (currentBestTime === 0 || state.timerSeconds < currentBestTime)) {
-    localStorage.setItem(STORAGE_KEYS.bestTime, String(state.timerSeconds));
-  }
-
-  updateBestStatsUI();
-}
-
 function finishGame() {
   stopTimer();
   state.score = calculateScore({
@@ -464,7 +591,6 @@ function finishGame() {
     lives: state.lives,
     totalTime: state.timerSeconds
   });
-
   const totalAnswered = state.correctAnswers + state.wrongAnswers;
   const accuracy = totalAnswered === 0 ? 0 : Math.round((state.correctAnswers / totalAnswered) * 100);
 
@@ -480,11 +606,26 @@ function finishGame() {
   switchScreen("summary");
 }
 
+function saveBestStats() {
+  const currentBestScore = readStorageNumber(STORAGE_KEYS.bestScore);
+  const currentBestTime = readStorageNumber(STORAGE_KEYS.bestTime);
+
+  if (state.score > currentBestScore) {
+    localStorage.setItem(STORAGE_KEYS.bestScore, String(state.score));
+  }
+
+  if (state.correctAnswers === state.totalQuestions && (currentBestTime === 0 || state.timerSeconds < currentBestTime)) {
+    localStorage.setItem(STORAGE_KEYS.bestTime, String(state.timerSeconds));
+  }
+
+  updateBestStatsUI();
+}
+
 function renderReviewList() {
   if (state.mistakes.length === 0) {
     elements.reviewList.innerHTML = `
       <div class="review-empty">
-        No hay fallos guardados en esta partida. Has hecho un trabajo genial.
+        No hay fallos guardados en esta partida. Todo limpio, buen trabajo.
       </div>
     `;
     elements.practiceMistakesBtn.disabled = true;
@@ -496,7 +637,8 @@ function renderReviewList() {
     .map(
       (mistake, index) => `
         <article class="review-item">
-          <p><strong>Error ${index + 1}</strong> ${mistake.type} · ${mistake.groupLabel}</p>
+          <p><strong>Error ${index + 1}</strong> ${mistake.type}</p>
+          <p><strong>Verbo:</strong> ${mistake.verb} (${mistake.spanish})</p>
           <p><strong>Pista:</strong> ${mistake.clue}</p>
           <p><strong>Respuesta correcta:</strong> ${mistake.correct}</p>
           <p><strong>Tu respuesta:</strong> ${mistake.user}</p>
@@ -506,34 +648,36 @@ function renderReviewList() {
     .join("");
 }
 
-function renderSupportTable() {
-  const searchTerm = elements.unitSearchInput.value.trim().toLowerCase();
-  const rows = buildSupportRows().sort((first, second) =>
-    state.tableSortAsc ? first.symbol.localeCompare(second.symbol) : second.symbol.localeCompare(first.symbol)
+function renderVerbTable() {
+  const searchTerm = normalizeText(elements.verbSearchInput.value);
+  const sortedVerbs = [...IRREGULAR_VERBS].sort((a, b) =>
+    state.tableSortAsc ? a.base.localeCompare(b.base) : b.base.localeCompare(a.base)
   );
 
-  const filtered = rows.filter((row) => {
-    const haystack = `${row.symbol} ${row.name} ${row.equivalent} ${row.group} ${row.ladder}`.toLowerCase();
+  const filtered = sortedVerbs.filter((verb) => {
+    const haystack = [verb.base, verb.past.join(" "), verb.participle.join(" "), verb.spanish.join(" ")]
+      .join(" ")
+      .toLowerCase();
     return haystack.includes(searchTerm);
   });
 
   if (filtered.length === 0) {
-    elements.unitTableBody.innerHTML = `
+    elements.verbTableBody.innerHTML = `
       <tr>
-        <td colspan="4">No hay unidades que coincidan con la búsqueda.</td>
+        <td colspan="4">No hay verbos que coincidan con la busqueda.</td>
       </tr>
     `;
     return;
   }
 
-  elements.unitTableBody.innerHTML = filtered
+  elements.verbTableBody.innerHTML = filtered
     .map(
-      (row) => `
+      (verb) => `
         <tr>
-          <td>${row.symbol}</td>
-          <td>${row.name}</td>
-          <td>${row.equivalent}</td>
-          <td>${row.group}</td>
+          <td>${verb.base}</td>
+          <td>${verb.past.join(" / ")}</td>
+          <td>${verb.participle.join(" / ")}</td>
+          <td>${verb.spanish.join(" / ")}</td>
         </tr>
       `
     )
@@ -560,7 +704,7 @@ function startNewGame(options = {}) {
   state.playerName = options.playerName?.trim() || elements.playerName.value.trim() || "Jugador";
   state.mode = options.mode ?? elements.gameMode.value;
   state.totalQuestions = options.totalQuestions ?? Number(elements.questionCount.value);
-  state.questionPool = buildQuestionPool(state.totalQuestions, options.predefinedQuestions ?? null);
+  state.questionPool = buildQuestionPool(options.verbs ?? IRREGULAR_VERBS, state.totalQuestions);
   savePlayerName(state.playerName);
   startTimer();
   switchScreen("game");
@@ -571,17 +715,14 @@ function handleAnswerSubmission(event) {
   event.preventDefault();
 
   const question = state.currentQuestion;
-  const userInputs = question.answers.map((_, index) => elements.answerForm.elements[String(index)].value);
-  const results = question.answers.map((answer, index) => {
-    const parsedValue = parseNumberInput(userInputs[index]);
-    return {
-      label: answer.label,
-      isCorrect: parsedValue !== null && nearlyEqual(parsedValue, answer.expectedValue),
-      parsedValue
-    };
-  });
+  const userInputs = question.answers.map((answer) => elements.answerForm.elements[answer.key].value);
+  const results = question.answers.map((answer, index) => ({
+    key: answer.key,
+    label: answer.label,
+    isCorrect: isCorrectAnswer(userInputs[index], getValidAnswersForKey(question.verb, answer.key))
+  }));
 
-  const allCorrect = results.every((result) => result.isCorrect);
+  const allCorrect = results.every((item) => item.isCorrect);
 
   if (allCorrect) {
     state.correctAnswers += 1;
@@ -597,7 +738,7 @@ function handleAnswerSubmission(event) {
     storeMistake(question, userInputs, results);
     const corrections = question.answers
       .filter((answer, index) => !results[index].isCorrect)
-      .map((answer) => answer.expectedDisplay)
+      .map((answer) => `${answer.label}: ${getCorrectAnswerText(answer.key, question.verb)}`)
       .join(" | ");
     showFeedback("error", `Ups. La respuesta correcta era ${corrections}.`);
   }
@@ -608,7 +749,7 @@ function handleAnswerSubmission(event) {
 }
 
 function openTable() {
-  renderSupportTable();
+  renderVerbTable();
   switchScreen("table");
 }
 
@@ -639,6 +780,7 @@ document.getElementById("playAgainBtn").addEventListener("click", () => {
 });
 
 document.getElementById("reviewErrorsBtn").addEventListener("click", () => {
+  state.reviewSource = "summary";
   renderReviewList();
   switchScreen("review");
 });
@@ -652,12 +794,19 @@ elements.practiceMistakesBtn.addEventListener("click", () => {
     return;
   }
 
-  const practiceQuestions = state.mistakes.map((mistake) => mistake.question);
+  const uniqueMistakes = Array.from(
+    new Map(
+      state.mistakes.map((item) => [
+        `${item.baseVerb.base}|${item.baseVerb.past.join(",")}|${item.baseVerb.participle.join(",")}`,
+        item.baseVerb
+      ])
+    ).values()
+  );
   startNewGame({
     playerName: state.playerName || elements.playerName.value.trim() || "Jugador",
     mode: "mixed",
-    totalQuestions: Math.min(practiceQuestions.length, 10),
-    predefinedQuestions: practiceQuestions
+    totalQuestions: Math.min(uniqueMistakes.length, 10),
+    verbs: uniqueMistakes
   });
 });
 
@@ -665,18 +814,18 @@ document.getElementById("openTableTopBtn").addEventListener("click", openTable);
 document.getElementById("openTableGameBtn").addEventListener("click", openTable);
 document.getElementById("closeTableBtn").addEventListener("click", returnFromTable);
 
-elements.unitSearchInput.addEventListener("input", renderSupportTable);
+elements.verbSearchInput.addEventListener("input", renderVerbTable);
 elements.sortTableBtn.addEventListener("click", () => {
   state.tableSortAsc = !state.tableSortAsc;
   elements.sortTableBtn.textContent = state.tableSortAsc ? "Ordenar A-Z" : "Ordenar Z-A";
-  renderSupportTable();
+  renderVerbTable();
 });
 
 function init() {
   loadLastPlayerName();
   updateBestStatsUI();
-  renderSupportTable();
-  showFeedback("", "Escribe tu nombre, elige una magnitud y empieza a convertir.");
+  renderVerbTable();
+  showFeedback("", "Escribe tu nombre y elige un modo para empezar.");
 }
 
 init();
