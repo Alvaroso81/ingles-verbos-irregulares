@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Superverbos Irregulares</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="ghost-button" id="openTableTopBtn" type="button">Tabla de apoyo</button>
+        <div class="best-score" id="bestScoreBadge">Mejor puntuación: 0</div>
+      </header>
+
+      <main class="screen-stack">
+        <section class="screen active" id="startScreen" aria-labelledby="gameTitle">
+          <div class="hero-card">
+            <p class="eyebrow">Juego de inglés para móvil</p>
+            <h1 id="gameTitle">Superverbos Irregulares</h1>
+            <p class="subtitle">
+              Escribe en inglés, encadena rachas y gana puntos antes de quedarte sin vidas.
+            </p>
+
+            <form id="startForm" class="start-form">
+              <label class="field-label" for="playerName">Nombre del participante</label>
+              <input
+                id="playerName"
+                name="playerName"
+                type="text"
+                maxlength="20"
+                autocomplete="nickname"
+                placeholder="Escribe tu nombre"
+                required
+              />
+
+              <label class="field-label" for="gameMode">Modo de juego</label>
+              <select id="gameMode" name="gameMode">
+                <option value="past-participle">Pasado y participio</option>
+                <option value="guess-infinitive">Adivinar infinitivo</option>
+                <option value="mixed">Mezclado</option>
+              </select>
+
+              <label class="field-label" for="questionCount">Número de preguntas</label>
+              <select id="questionCount" name="questionCount">
+                <option value="10">10 preguntas</option>
+                <option value="15" selected>15 preguntas</option>
+                <option value="20">20 preguntas</option>
+              </select>
+
+              <button class="primary-button large-button" type="submit">Empezar</button>
+            </form>
+
+            <div class="home-stats">
+              <article class="mini-card">
+                <span class="mini-card-label">Mejor puntuación</span>
+                <strong id="bestScoreValue">0</strong>
+              </article>
+              <article class="mini-card">
+                <span class="mini-card-label">Mejor tiempo</span>
+                <strong id="bestTimeValue">--:--</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="gameScreen" aria-labelledby="gameHeading">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">En partida</p>
+                <h2 id="gameHeading">Turno de <span id="currentPlayerName">Jugador</span></h2>
+              </div>
+              <button class="ghost-button" id="openTableGameBtn" type="button">Tabla</button>
+            </div>
+
+            <div class="scoreboard">
+              <div class="score-pill">
+                <span>Puntos</span>
+                <strong id="scoreValue">0</strong>
+              </div>
+              <div class="score-pill">
+                <span>Racha</span>
+                <strong id="streakValue">0</strong>
+              </div>
+              <div class="score-pill">
+                <span>Vidas</span>
+                <strong id="livesValue">3</strong>
+              </div>
+              <div class="score-pill">
+                <span>Tiempo</span>
+                <strong id="timerValue">00:00</strong>
+              </div>
+            </div>
+
+            <div class="progress-row">
+              <span id="questionCounter">Pregunta 1 de 15</span>
+              <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+
+            <article class="question-card">
+              <span class="question-badge" id="questionModeBadge">Modo mezclado</span>
+              <h3 id="questionPrompt">Cargando pregunta...</h3>
+              <p class="question-helper" id="questionHelper">
+                Responde siempre en inglés y usa una palabra por casilla.
+              </p>
+              <div class="clue-card" id="questionClue"></div>
+
+              <form id="answerForm" class="answer-form" autocomplete="off">
+                <div class="answer-grid" id="answerFields"></div>
+                <button class="primary-button large-button" type="submit">Comprobar</button>
+              </form>
+            </article>
+
+            <div class="feedback-box" id="feedbackBox" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="screen" id="summaryScreen" aria-labelledby="summaryHeading">
+          <div class="panel summary-panel">
+            <p class="eyebrow">Partida terminada</p>
+            <h2 id="summaryHeading">Resumen final</h2>
+            <p class="summary-player">Jugador: <strong id="summaryPlayerName"></strong></p>
+
+            <div class="summary-score">
+              <span>Puntuación final</span>
+              <strong id="summaryFinalScore">0</strong>
+            </div>
+
+            <div class="summary-grid">
+              <article class="mini-card">
+                <span class="mini-card-label">Aciertos</span>
+                <strong id="summaryCorrect">0</strong>
+              </article>
+              <article class="mini-card">
+                <span class="mini-card-label">Fallos</span>
+                <strong id="summaryWrong">0</strong>
+              </article>
+              <article class="mini-card">
+                <span class="mini-card-label">Tiempo total</span>
+                <strong id="summaryTime">00:00</strong>
+              </article>
+              <article class="mini-card">
+                <span class="mini-card-label">% de acierto</span>
+                <strong id="summaryAccuracy">0%</strong>
+              </article>
+            </div>
+
+            <div class="summary-actions">
+              <button class="primary-button" id="playAgainBtn" type="button">Volver a jugar</button>
+              <button class="secondary-button" id="reviewErrorsBtn" type="button">Repasar errores</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="reviewScreen" aria-labelledby="reviewHeading">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Aprender de los fallos</p>
+                <h2 id="reviewHeading">Repasar fallos</h2>
+              </div>
+              <button class="ghost-button" id="backToSummaryBtn" type="button">Volver</button>
+            </div>
+
+            <div class="review-actions">
+              <button class="primary-button" id="practiceMistakesBtn" type="button">
+                Practicar solo fallos
+              </button>
+            </div>
+
+            <div class="review-list" id="reviewList"></div>
+          </div>
+        </section>
+
+        <section class="screen" id="tableScreen" aria-labelledby="tableHeading">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Consulta rápida</p>
+                <h2 id="tableHeading">Tabla de apoyo</h2>
+              </div>
+              <button class="ghost-button" id="closeTableBtn" type="button">Cerrar</button>
+            </div>
+
+            <div class="table-tools">
+              <input
+                id="verbSearchInput"
+                type="search"
+                placeholder="Buscar verbo o traducción"
+                aria-label="Buscar verbo o traducción"
+              />
+              <button class="secondary-button" id="sortTableBtn" type="button">
+                Ordenar A-Z
+              </button>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Infinitivo</th>
+                    <th>Pasado</th>
+                    <th>Participio</th>
+                    <th>Español</th>
+                  </tr>
+                </thead>
+                <tbody id="verbTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
